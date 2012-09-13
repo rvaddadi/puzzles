@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script type="text/javascript">
+      $(function(){
+        $('#create-new-game').click(function(){
+          var n = $("#n").val();
+          var board = '<div><table class="board"><tr>';
+          for (var i = 0; i < n; i++)
+            board += '<td>O</td>';
+          board += '<td>_</td>';
+          for (var i = 0; i < n; i++)
+            board += '<td>X</td>';
+          board += '</tr></table><p>0</p></div>';
+          $('body').append(board);
+          return false;
+        });
+        $('.board td').live('click', function(event){
+          var $element = $(event.target);
+          var $destination = null;
+          var type = $element.text();
+          if (type == 'O')
+            if($element.next().text() == '_')
+              $destination = $element.next();
+            else if($element.next().next().text() == '_')
+              $destination = $element.next().next();
+          if (type == 'X')
+            if($element.prev().text() == '_')
+              $destination = $element.prev();
+            else if($element.prev().prev().text() == '_')
+              $destination = $element.prev().prev();
+          if ($destination != null) {
+            var tmp = $element.text();
+            $element.text($destination.text());
+            $destination.text(tmp);
+            $element.parents('div').children('p').text(parseInt($element.parents('div').children('p').text()) + 1);
+          };
+        });
+      });
+    </script>
+    <title>Project euler 321 - study</title>
+  </head>
+  <body>
+    <h1>Project euler 321 - study</h1>
+    <form action="#">
+      <p>
+        <label for="n">N: </label>
+        <input min="1" type="number" value="2" name="n" id="n" />
+        <input type="submit" value="Create new game" id="create-new-game" />
+      </p>
+    </form>
+  </body>
+</html>

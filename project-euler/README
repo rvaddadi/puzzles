@@ -1,0 +1,11 @@
+My solutions for http://projecteuler.net/ problems.
+I made these programs to study ruby language.
+I follow the rules of the project:
+* programs should find the correct answer under one minute
+* you shouldn't look for ways to solve the problem on the web before you completed it
+This second rule I am not always strict about - I comment on the code when it's the case.
+Most of the times I don't get the most efficient or beautiful code possible. But
+that's fine for the purpose: learing the ruby language.
+
+Hope you enjoy reading this code :D
+

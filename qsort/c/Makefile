@@ -1,7 +1,10 @@
+CC=gcc
+CFLAGS=-Wall
+
 all: compile
 
 compile:
-	gcc -Wall qsort.c -o qsort
+	$(CC) $(CFLAGS) qsort.c -o qsort
 
 test: compile
 	./qsort < test_case.txt

@@ -1,4 +1,4 @@
-#include <array.h>
+#include "array.h"
 
 t_array array_new(int max_size) {
   t_array new_array = (t_array) malloc(sizeof(struct s_array));

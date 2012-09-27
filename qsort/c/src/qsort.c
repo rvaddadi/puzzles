@@ -1,4 +1,4 @@
-#include <qsort.h>
+#include "qsort.h"
 
 int _array_qsort_get_pivot(t_array array, t_array *array_without_pivot);
 t_array* _array_qsort_partition(t_array array, int pivot);

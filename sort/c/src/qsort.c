@@ -22,6 +22,12 @@ t_array array_qsort(t_array array) {
     partitions = _array_qsort_partition(array_without_pivot, pivot);
 
     sorted_array = array_concat(3, array_qsort(partitions[0]), pivot_array, array_qsort(partitions[1]));
+
+    array_free(pivot_array);
+    array_free(array_without_pivot);
+    array_free(partitions[0]);
+    array_free(partitions[1]);
+    free(partitions);
   }
 
   return sorted_array;

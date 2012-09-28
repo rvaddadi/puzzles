@@ -7,13 +7,13 @@ BDIR=bin
 CC=gcc
 CFLAGS=-I$(IDIR) -Wall
 
-_DEPS=array.h qsort.h
+_DEPS=array.h qsort.h mergesort.h
 DEPS=$(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ=array.o qsort.o
+_OBJ=array.o qsort.o mergesort.o
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
-_TESTS=qsort
+_TESTS=qsort mergesort
 TESTS=$(patsubst %,$(TDIR)/$(BDIR)/%,$(_TESTS))
 
 all: compile
@@ -24,6 +24,7 @@ compile_test: compile $(TESTS)
 
 test: compile_test
 	$(TDIR)/$(BDIR)/qsort
+	$(TDIR)/$(BDIR)/mergesort
 
 clean:
 	rm -rf $(OBJ) $(TDIR)/$(BDIR)/*

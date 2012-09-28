@@ -1,3 +1,4 @@
+#include "array.h"
 #include "qsort.h"
 
 t_array ordered_array;

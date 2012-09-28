@@ -1,3 +1,7 @@
+#ifndef ARRAY_H
+
+#define ARRAY_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,3 +23,4 @@ t_array array_dup(t_array array);
 t_array array_concat(int num_arrays, ...);
 int array_equals(t_array array1, t_array array2);
 
+#endif

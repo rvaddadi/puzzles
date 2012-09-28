@@ -1,4 +1,4 @@
-Quick Sort
-==========
+Sorting algorithms
+==================
 
-This is a classic sorting algorithm of `O(n * log(n))` complexity.
+Sorting algorithms are essential to Computer Science. Here I play with them.

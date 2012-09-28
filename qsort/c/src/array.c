@@ -99,3 +99,18 @@ t_array array_concat(int num_arrays, ...) {
   return result_array;
 }
 
+int array_equals(t_array array1, t_array array2) {
+  int equals;
+  int i;
+
+  equals = array1->size == array2->size;
+
+  for (i = 0; equals && i < array1->size; i++) {
+    if (array1->elements[i] != array2->elements[i]) {
+      equals = 0;
+    }
+  }
+
+  return equals;
+}
+

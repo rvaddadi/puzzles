@@ -17,4 +17,5 @@ char* array_to_string(t_array array);
 void array_swap(t_array array, int i, int j);
 t_array array_dup(t_array array);
 t_array array_concat(int num_arrays, ...);
+int array_equals(t_array array1, t_array array2);
 

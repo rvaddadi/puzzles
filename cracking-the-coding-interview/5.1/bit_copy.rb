@@ -1,6 +1,6 @@
 def bit_copy(n, m, i, j)
 
-  mask = (2^(j - i) - 1) << i ^ ~0
+  mask = (1 << (j - i) - 1) << i ^ ~0
 
   n & mask | m << i
 

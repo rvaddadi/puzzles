@@ -15,7 +15,7 @@ public class NextBitCount {
 
 		index = n.lastIndexOf("10");
 
-		smallest = n.substring(0, index) + "01" + n.substring(index + 2);
+		smallest = n.substring(0, index) + "01" + leftOnes(n.substring(index + 2));
 
 		return new String[] { smallest, largest };
 	}
@@ -37,8 +37,26 @@ public class NextBitCount {
 		return result;
 	}
 
+	private static String leftOnes(String n) {
+		String result;
+		int i;
+
+		result = "";
+
+		for (i = 0; i < n.length(); i++) {
+			if (n.charAt(i) == '0') {
+				result += "0";
+			} else {
+				result = "1" + result;
+			}
+		}
+
+		return result;
+	}
+
 	public static void main(String[] args) {
 		nextBitCount("10110");
 		nextBitCount("10111");
+		nextBitCount("100011");
 	}
 }

@@ -57,6 +57,7 @@ public class NextBitCount {
 	public static void main(String[] args) {
 		nextBitCount("10110");
 		nextBitCount("10111");
+		nextBitCount("11100");
 		nextBitCount("100011");
 	}
 }

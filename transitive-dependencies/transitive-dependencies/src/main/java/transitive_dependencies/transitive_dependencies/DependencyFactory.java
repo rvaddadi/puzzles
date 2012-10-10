@@ -20,6 +20,7 @@ public class DependencyFactory<T> {
 
         if (dependency == null) {
             dependency = new Dependency<T>(description);
+            instances.put(description, dependency);
         }
 
         return dependency;

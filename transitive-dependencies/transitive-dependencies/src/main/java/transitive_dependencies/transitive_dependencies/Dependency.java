@@ -1,13 +1,13 @@
 package transitive_dependencies.transitive_dependencies;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Dependency<T> {
 
-    private T                   description;
-    private List<Dependency<T>> dependencies;
+    private T                  description;
+    private Set<Dependency<T>> dependencies;
 
     /**
      * You probably shouldn't be calling this constructor yourself. Look at
@@ -16,17 +16,12 @@ public class Dependency<T> {
     public Dependency(T description) {
 
         this.description = description;
-        this.dependencies = new ArrayList<>();
+        this.dependencies = new HashSet<>();
     }
 
     public boolean addDependency(Dependency<T> dependency) {
 
         return dependencies.add(dependency);
-    }
-
-    public boolean removeDependency(Object dependency) {
-
-        return dependencies.remove(dependency);
     }
 
     @Override
@@ -69,8 +64,8 @@ public class Dependency<T> {
         return description;
     }
 
-    public List<Dependency<T>> getDependencies() {
+    public Set<Dependency<T>> getDependencies() {
 
-        return Collections.unmodifiableList(dependencies);
+        return Collections.unmodifiableSet(dependencies);
     }
 }

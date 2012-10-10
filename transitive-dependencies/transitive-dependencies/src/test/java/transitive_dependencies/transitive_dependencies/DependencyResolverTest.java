@@ -1,11 +1,9 @@
 package transitive_dependencies.transitive_dependencies;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +19,7 @@ public class DependencyResolverTest {
     public void setUp() {
 
         dependencyFactory = new DependencyFactory<>();
-        dependencyResolver = new DependencyResolver<>(dependencyFactory);
+        dependencyResolver = new DependencyResolver<>();
     }
 
     @Test
@@ -42,7 +40,7 @@ public class DependencyResolverTest {
     @Test
     public void testMultipleDependencies() {
 
-        List<Dependency<String>> subject = new ArrayList<>();
+        Set<Dependency<String>> subject = new HashSet<>();
 
         Map<Dependency<String>, Set<Dependency<String>>> expected = new HashMap<>();
         Set<Dependency<String>> lineExpectedA;
@@ -82,6 +80,46 @@ public class DependencyResolverTest {
 
         dependencyA.addDependency(dependencyB);
         dependencyB.addDependency(dependencyC);
+
+        expected.add(dependencyB);
+        expected.add(dependencyC);
+
+        assertEquals(expected, dependencyResolver.resolve(dependencyA));
+    }
+
+    @Test
+    public void testDeepTransitiveDependency() {
+
+        Set<Dependency<String>> expected = new HashSet<>();
+
+        Dependency<String> dependencyA = dependencyFactory.build("A");
+        Dependency<String> dependencyB = dependencyFactory.build("B");
+        Dependency<String> dependencyC = dependencyFactory.build("C");
+        Dependency<String> dependencyD = dependencyFactory.build("D");
+
+        dependencyA.addDependency(dependencyB);
+        dependencyB.addDependency(dependencyC);
+        dependencyC.addDependency(dependencyD);
+
+        expected.add(dependencyB);
+        expected.add(dependencyC);
+        expected.add(dependencyD);
+
+        assertEquals(expected, dependencyResolver.resolve(dependencyA));
+    }
+
+    @Test
+    public void testCyclicDependency() {
+
+        Set<Dependency<String>> expected = new HashSet<>();
+
+        Dependency<String> dependencyA = dependencyFactory.build("A");
+        Dependency<String> dependencyB = dependencyFactory.build("B");
+        Dependency<String> dependencyC = dependencyFactory.build("C");
+
+        dependencyA.addDependency(dependencyB);
+        dependencyB.addDependency(dependencyC);
+        dependencyC.addDependency(dependencyA);
 
         expected.add(dependencyB);
         expected.add(dependencyC);

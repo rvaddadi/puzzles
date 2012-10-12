@@ -25,6 +25,36 @@ public class Subsets {
             }
             subsets.add(subset);
         }
+
+        return subsets;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Set<Set<T>> allSubsetsRecursive(Set<T> set) {
+
+        Set<Set<T>> subsets;
+        Set<T> newSubset;
+        T head;
+        Set<T> tail;
+
+        subsets = new HashSet<>();
+
+        if (set.isEmpty()) {
+            subsets.add(set);
+        }
+        else {
+            head = (T) set.toArray()[0];
+            tail = new HashSet<>(set);
+            tail.remove(head);
+
+            for (Set<T> subset : allSubsetsRecursive(tail)) {
+                subsets.add(subset);
+                newSubset = new HashSet<>(subset);
+                newSubset.add(head);
+                subsets.add(newSubset);
+            }
+        }
+
         return subsets;
     }
 
@@ -37,5 +67,6 @@ public class Subsets {
         subject.add(3);
 
         allSubsets(subject);
+        allSubsetsRecursive(subject);
     }
 }

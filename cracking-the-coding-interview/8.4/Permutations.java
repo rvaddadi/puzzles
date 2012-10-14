@@ -12,8 +12,7 @@ public class Permutations {
 
 		if (string.length() < 1) {
 			permutations.add(string);
-		}
-		else {
+		} else {
 			head = string.charAt(0);
 			tail = string.substring(1);
 
@@ -30,7 +29,7 @@ public class Permutations {
 
 		return permutations;
 	}
-	
+
 	public static void main(String[] args) {
 		permutations("abc");
 	}

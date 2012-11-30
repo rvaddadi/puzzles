@@ -82,7 +82,7 @@ class Solitaire
         keystream << output_letter(current_deck)
       end
 
-      group keystream
+      sanitize keystream
     end
 
     def to_numbers(message)
@@ -93,11 +93,11 @@ class Solitaire
     end
 
     def add_numbers(numbers_1, numbers_2)
-      map_numbers(numbers_1, numbers_2) { |a, b| (a + b) % 26 }
+      map_numbers(numbers_1, numbers_2) { |a, b| ((a + b).pred % 26).succ }
     end
 
     def subtract_numbers(numbers_1, numbers_2)
-      map_numbers(numbers_1, numbers_2) { |a, b| (a - b) % 26 }
+      map_numbers(numbers_1, numbers_2) { |a, b| ((a - b).pred % 26).succ }
     end
 
     def to_letters(numbers)

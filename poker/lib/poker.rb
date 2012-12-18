@@ -9,7 +9,7 @@ class Poker
     select_card = ->(parsed_hand, card_index) { parsed_hand.select { |hand| hand.card_index != card_index } }
     processes = [:royal_flush?, :straight_flush, :four_of_a_kind,
       :full_house, :flush, :straight, :three_of_a_kind,
-      :two_pair, :one_pair, ->(*args){ true }]
+      :two_pair, :one_pair, :highest_card]
 
     parsed_hand_1 = parse_hand hand_1
     parsed_hand_2 = parse_hand hand_2
@@ -26,7 +26,7 @@ class Poker
           return 1 if processed_hand_1 > processed_hand_2
           return 2 if processed_hand_1 < processed_hand_2
         end
-        return highest_card(select_card[parsed_hand_1, processed_hand_1]) > highest_card(select_card[parsed_hand_2, processed_hand_1]) ? 1 : 2
+        return highest_card(select_card[parsed_hand_1, processed_hand_1]) > highest_card(select_card[parsed_hand_2, processed_hand_2]) ? 1 : 2
       end
     end
   end

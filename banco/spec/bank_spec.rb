@@ -24,7 +24,7 @@ describe Bank do
       expect(subject.tellers).to be_zero
     end
 
-    it 'empties the Clients Array' do
+    it 'starts the Clients with empty Array' do
       expect(subject.clients).to match_array([])
     end
   end
@@ -45,11 +45,11 @@ describe Bank do
         expect(subject.tellers).to eq(tellers)
       end
 
-      context 'has clients' do
+      context 'has Clients' do
         before do
-          subject.add_clients_to_line(clients)
-                 .close
-                 .open(tellers)
+          bank.open(tellers)
+              .add_clients_to_line(clients)
+              .close
         end
 
         it 'empties the Clients Array' do

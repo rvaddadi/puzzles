@@ -14,6 +14,7 @@ describe Bank do
    ]
   }
   let(:waiting_durations) { [0, 10, 19, 28, 10] }
+  let(:max_waiting_time) { 20 }
 
   describe '#initialize' do
     it 'sets the state to closed' do
@@ -149,6 +150,30 @@ describe Bank do
 
       it 'add client to line' do
         expect(subject.clients).to match_array([clients.first])
+      end
+    end
+  end
+
+  describe '#clients_that_waited_more_than' do
+    subject { bank.clients_that_waited_more_than(max_waiting_time) }
+
+    context 'is open' do
+      before { bank.open(tellers) }
+
+      it 'raises Bank::InvalidStateError' do
+        expect(-> { subject }).to raise_error Bank::InvalidStateError
+      end
+    end
+
+    context 'is closed' do
+      before do
+        bank.open(tellers)
+            .add_clients_to_line(clients)
+            .close
+      end
+
+      it 'returns quantity of clients that match condition' do
+        expect(subject).to eq(1)
       end
     end
   end

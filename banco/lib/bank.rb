@@ -138,6 +138,14 @@ class Bank
     self
   end
 
+  def clients_that_waited_more_than(time)
+    if open?
+      raise InvalidStateError.new 'You tried to count clients in an open Bank'
+    end
+
+    clients.count { |client| client.waiting_duration > time }
+  end
+
   private
     def calculate_wating_times
       time              = 0

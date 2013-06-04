@@ -55,19 +55,23 @@ class Bank
     self
   end
 
-  # Public: Tels if the Bank is open.
+  # Public: Tells if the Bank is open.
   #
   # Returns the Boolean indicating if the Bank is open.
   def open?
     state == :open
   end
 
+  # Public: Closes the bank.
+  #
+  # Returns the Bank itself, useful for chaining.
+  # Raises Bank::InvalidStateError if the Bank is already closed.
   def close
     unless open?
       raise InvalidStateError.new 'You tried to close an already closed Bank'
     end
 
-    @state = :closed
+    @state   = :closed
     self
   end
 end

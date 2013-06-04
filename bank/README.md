@@ -28,6 +28,13 @@ $ bundle exec ruby bin/bank [input-file]
 That's not required, but it costs nothing to implement thanks to the
 magic of `ARGF` so I thought I would put it anyways.
 
+Run tests
+---------
+
+```bash
+$ bundle exec rspec
+```
+
 
 [1]: http://olimpiada.ic.unicamp.br/pratique/programacao/nivel2/2012f2p2_banco
 [2]: http://olimpiada.ic.unicamp.br/

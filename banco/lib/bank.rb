@@ -100,6 +100,10 @@ class Bank
   end
 
   def add_clients_to_line clients
+    unless open?
+      raise InvalidStateError.new 'You tried to add clients to an closed Bank'
+    end
+
     clients.each { |client| add_client_to_line client }
     self
   end

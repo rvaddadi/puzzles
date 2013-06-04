@@ -109,5 +109,11 @@ describe Bank do
 
   describe '#add_clients_to_line' do
     subject { bank.add_clients_to_line(clients) }
+
+    context 'is closed' do
+      it 'raises Bank::InvalidStateError' do
+        expect(-> { subject }).to raise_error Bank::InvalidStateError
+      end
+    end
   end
 end

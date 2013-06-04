@@ -15,11 +15,11 @@ bank.open c
 n.times do
   t, d = read_two_integers
 
-  client = Bank::Client.new arrival: t, serving_duration: d
+  client = Bank::Client.new arrival: t, service_duration: d
 
   bank.add_to_line client
 end
 
 bank.close
 
-puts bank.clients_that_waited_mode_than 20
+puts bank.clients_that_waited_more_than  20

@@ -48,6 +48,7 @@ class Bank
     if open?
       raise InvalidStateError.new 'You tried to open an already opened Bank'
     end
+
     @state   = :open
     @tellers = tellers
     self
@@ -65,6 +66,7 @@ class Bank
       raise InvalidStateError.new 'You tried to close an already closed Bank'
     end
 
+    @state = :closed
     self
   end
 end

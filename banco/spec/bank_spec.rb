@@ -5,6 +5,12 @@ describe Bank do
 
   let(:tellers) { 1 }
 
+  describe '#initialize' do
+    it 'sets the state of the Bank to closed' do
+      expect(subject.state).to eq(:closed)
+    end
+  end
+
   describe '#open' do
     subject { bank.open(tellers) }
 
@@ -13,7 +19,7 @@ describe Bank do
         expect(subject).to eq(bank)
       end
 
-      it 'sets the state of the Bank' do
+      it 'sets the state of the Bank to open' do
         expect(subject.state).to eq(:open)
       end
 
@@ -60,8 +66,13 @@ describe Bank do
 
     context 'Bank is open' do
       before { bank.open(tellers) }
+
       it 'returns the Bank itself' do
         expect(subject).to eq(bank)
+      end
+
+      it 'sets the state of the Bank to closed' do
+        expect(subject.state).to eq(:closed)
       end
     end
   end

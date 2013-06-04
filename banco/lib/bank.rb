@@ -34,7 +34,8 @@ class Bank
 
   # Public: Initialize a Bank.
   def initialize
-    @state = :closed
+    @state   = :closed
+    @tellers = 0
   end
 
   # Public: Opens the Bank for the day.

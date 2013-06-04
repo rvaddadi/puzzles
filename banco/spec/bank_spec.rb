@@ -9,6 +9,10 @@ describe Bank do
     it 'sets the state of the Bank to closed' do
       expect(subject.state).to eq(:closed)
     end
+
+    it 'sets the quantity of tellers to zero' do
+      expect(subject.tellers).to be_zero
+    end
   end
 
   describe '#open' do

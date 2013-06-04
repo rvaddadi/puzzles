@@ -19,8 +19,10 @@
 #   # => 1
 class Bank
 
-  # Public: Error raised when trying to open an already opened Bank.
-  class AlreadyOpen < StandardError
+  # Public: Error raised when invalid operations are tried with the Bank.
+  # For instance, trying to open an already opened bank, of trying to close
+  # an already closed bank.
+  class InvalidStateError < StandardError
   end
 
   # Public: Returns the Integer number of tellers.
@@ -41,9 +43,11 @@ class Bank
   #           Bank for the day.
   #
   # Returns the Bank itself, useful for chaining.
-  # Raises Bank::AlreadyOpen if the Bank is already open.
+  # Raises Bank::InvalidStateError if the Bank is already open.
   def open tellers
-    raise AlreadyOpen if open?
+    if open?
+      raise InvalidStateError.new 'You tried to open an already opened Bank'
+    end
     @state   = :open
     @tellers = tellers
     self

@@ -18,9 +18,11 @@ describe Bank do
       end
     end
 
-    context 'bank is already open' do
-      it 'raises Bank::AlreadyOpen' do
-        expect(-> { subject.open(tellers) }).to raise_error Bank::AlreadyOpen
+    context 'bank is open' do
+      it 'raises Bank::InvalidStateError' do
+        expect(
+          -> { subject.open(tellers) }
+        ).to raise_error Bank::InvalidStateError
       end
     end
   end
@@ -44,8 +46,10 @@ describe Bank do
   end
 
   describe '#close' do
-    subject { bank.open(tellers).close }
+    subject { bank.close }
 
+    context 'bank is closed' do
 
+    end
   end
 end

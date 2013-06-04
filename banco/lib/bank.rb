@@ -106,10 +106,6 @@ class Bank
   # Returns the Bank itself, useful for chaining.
   # Raises Bank::InvalidStateError if the Bank is already closed.
   def add_clients_to_line clients
-    unless open?
-      raise InvalidStateError.new 'You tried to add clients to an closed Bank'
-    end
-
     clients.each { |client| add_client_to_line client }
     self
   end
@@ -121,6 +117,10 @@ class Bank
   # Returns the Bank itself, useful for chaining.
   # Raises Bank::InvalidStateError if the Bank is already closed.
   def add_client_to_line client
+    unless open?
+      raise InvalidStateError.new 'You tried to add clients to an closed Bank'
+    end
+
     @clients << client
     self
   end

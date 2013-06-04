@@ -124,4 +124,22 @@ describe Bank do
       end
     end
   end
+
+  describe '#add_client_to_line' do
+    subject { bank.add_client_to_line(clients.first) }
+
+    context 'is closed' do
+      it 'raises Bank::InvalidStateError' do
+        expect(-> { subject }).to raise_error Bank::InvalidStateError
+      end
+    end
+
+    context 'is open' do
+      before { bank.open(tellers) }
+
+      it 'add client to line' do
+        expect(subject.clients).to match_array([clients.first])
+      end
+    end
+  end
 end

@@ -115,5 +115,13 @@ describe Bank do
         expect(-> { subject }).to raise_error Bank::InvalidStateError
       end
     end
+
+    context 'is open' do
+      before { bank.open(tellers) }
+
+      it 'adds clients to line' do
+        expect(subject.clients).to match_array(clients)
+      end
+    end
   end
 end

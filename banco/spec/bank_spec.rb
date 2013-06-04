@@ -8,9 +8,13 @@ describe Bank do
   describe '#open' do
     subject { bank.open(tellers) }
 
-    context 'bank is closed' do
-      it 'returns the bank itself' do
+    context 'Bank is closed' do
+      it 'returns the Bank itself' do
         expect(subject).to eq(bank)
+      end
+
+      it 'sets the state of the Bank' do
+        expect(subject.state).to eq(:open)
       end
 
       it 'sets the quantity of tellers' do
@@ -18,7 +22,7 @@ describe Bank do
       end
     end
 
-    context 'bank is open' do
+    context 'Bank is open' do
       it 'raises Bank::InvalidStateError' do
         expect(
           -> { subject.open(tellers) }
@@ -30,13 +34,13 @@ describe Bank do
   describe '#open?' do
     subject { bank.open? }
 
-    context 'bank is closed' do
+    context 'Bank is closed' do
       it 'returns true' do
         expect(subject).to be_false
       end
     end
 
-    context 'bank is open' do
+    context 'Bank is open' do
       before { bank.open(tellers) }
 
       it 'returns false' do
@@ -48,8 +52,17 @@ describe Bank do
   describe '#close' do
     subject { bank.close }
 
-    context 'bank is closed' do
+    context 'Bank is closed' do
+      it 'raises Bank::InvalidStateError' do
+        expect(-> { subject }).to raise_error Bank::InvalidStateError
+      end
+    end
 
+    context 'Bank is open' do
+      before { bank.open(tellers) }
+      it 'returns the Bank itself' do
+        expect(subject).to eq(bank)
+      end
     end
   end
 end

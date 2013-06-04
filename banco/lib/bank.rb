@@ -20,8 +20,8 @@
 class Bank
 
   # Public: Error raised when invalid operations are tried with the Bank.
-  # For instance, trying to open an already opened bank, of trying to close
-  # an already closed bank.
+  # For instance, trying to open an already opened Bank, of trying to close
+  # an already closed Bank.
   class InvalidStateError < StandardError
   end
 
@@ -37,7 +37,7 @@ class Bank
     @state = :closed
   end
 
-  # Public: Opens the bank for the day.
+  # Public: Opens the Bank for the day.
   #
   # tellers - The Integer representing the number of tellers in the
   #           Bank for the day.
@@ -53,10 +53,18 @@ class Bank
     self
   end
 
-  # Public: Tels if the bank is open.
+  # Public: Tels if the Bank is open.
   #
   # Returns the Boolean indicating if the Bank is open.
   def open?
     state == :open
+  end
+
+  def close
+    unless open?
+      raise InvalidStateError.new 'You tried to close an already closed Bank'
+    end
+
+    self
   end
 end

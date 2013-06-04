@@ -99,6 +99,12 @@ class Bank
     self
   end
 
+  # Public: Adds Clients to line in Bank.
+  #
+  # clients - The Array of Clients to be added to Bank.
+  #
+  # Returns the Bank itself, useful for chaining.
+  # Raises Bank::InvalidStateError if the Bank is already closed.
   def add_clients_to_line clients
     unless open?
       raise InvalidStateError.new 'You tried to add clients to an closed Bank'
@@ -108,6 +114,12 @@ class Bank
     self
   end
 
+  # Public: Add a Client to line in Bank.
+  #
+  # client - The Client to be added to Bank.
+  #
+  # Returns the Bank itself, useful for chaining.
+  # Raises Bank::InvalidStateError if the Bank is already closed.
   def add_client_to_line client
     @clients << client
     self

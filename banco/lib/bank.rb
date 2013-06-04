@@ -1,3 +1,5 @@
+require 'virtus'
+
 # Public: Handle clients in a Bank.
 #
 # Examples
@@ -49,10 +51,14 @@ class Bank
   # either :open or :closed
   attr_reader :state
 
+  # Public: Retuns the Array of Clients in the Bank.
+  attr_reader :clients
+
   # Public: Initialize a Bank.
   def initialize
     @state   = :closed
     @tellers = 0
+    @clients = Array.new
   end
 
   # Public: Opens the Bank for the day.
@@ -69,6 +75,7 @@ class Bank
 
     @state   = :open
     @tellers = tellers
+    @clients.clear
     self
   end
 
@@ -89,6 +96,16 @@ class Bank
     end
 
     @state   = :closed
+    self
+  end
+
+  def add_clients_to_line clients
+    clients.each { |client| add_client_to_line client }
+    self
+  end
+
+  def add_client_to_line client
+    @clients << client
     self
   end
 end

@@ -16,33 +16,49 @@ describe Bank do
   }
 
   describe '#initialize' do
-    it 'sets the state of the Bank to closed' do
+    it 'sets the state to closed' do
       expect(subject.state).to eq(:closed)
     end
 
     it 'sets the quantity of tellers to zero' do
       expect(subject.tellers).to be_zero
     end
+
+    it 'empties the Clients Array' do
+      expect(subject.clients).to match_array([])
+    end
   end
 
   describe '#open' do
     subject { bank.open(tellers) }
 
-    context 'Bank is closed' do
+    context 'is closed' do
       it 'returns the Bank itself' do
         expect(subject).to eq(bank)
       end
 
-      it 'sets the state of the Bank to open' do
+      it 'sets the state to open' do
         expect(subject.state).to eq(:open)
       end
 
       it 'sets the quantity of tellers' do
         expect(subject.tellers).to eq(tellers)
       end
+
+      context 'has clients' do
+        before do
+          subject.add_clients_to_line(clients)
+                 .close
+                 .open(tellers)
+        end
+
+        it 'empties the Clients Array' do
+          expect(subject.clients).to match_array([])
+        end
+      end
     end
 
-    context 'Bank is open' do
+    context 'is open' do
       it 'raises Bank::InvalidStateError' do
         expect(
           -> { subject.open(tellers) }
@@ -54,13 +70,13 @@ describe Bank do
   describe '#open?' do
     subject { bank.open? }
 
-    context 'Bank is closed' do
+    context 'is closed' do
       it 'returns true' do
         expect(subject).to be_false
       end
     end
 
-    context 'Bank is open' do
+    context 'is open' do
       before { bank.open(tellers) }
 
       it 'returns false' do
@@ -72,20 +88,20 @@ describe Bank do
   describe '#close' do
     subject { bank.close }
 
-    context 'Bank is closed' do
+    context 'is closed' do
       it 'raises Bank::InvalidStateError' do
         expect(-> { subject }).to raise_error Bank::InvalidStateError
       end
     end
 
-    context 'Bank is open' do
+    context 'is open' do
       before { bank.open(tellers) }
 
       it 'returns the Bank itself' do
         expect(subject).to eq(bank)
       end
 
-      it 'sets the state of the Bank to closed' do
+      it 'sets the state to closed' do
         expect(subject.state).to eq(:closed)
       end
     end

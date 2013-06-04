@@ -25,6 +25,23 @@ class Bank
   class InvalidStateError < StandardError
   end
 
+  # Public: Represents a Client in the line of the Bank.
+  class Client
+    include Virtus
+
+    # Public: The Integer representing the minute the Client arrived
+    # at the bank.
+    attribute :arrival, Integer
+
+    # Public: The Integer representing the amount of minutes it takes
+    # to serve the Client.
+    attribute :service_duration, Integer
+
+    # Public: The Integer representing the amount of minutes the Client
+    # had to wait in line.
+    attribute :waiting_duration, Integer, default: 0
+  end
+
   # Public: Returns the Integer number of tellers.
   attr_reader :tellers
 

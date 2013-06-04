@@ -44,7 +44,8 @@ class Bank
   # Raises Bank::AlreadyOpen if the Bank is already open.
   def open tellers
     raise AlreadyOpen if open?
-    @state = :open
+    @state   = :open
+    @tellers = tellers
     self
   end
 

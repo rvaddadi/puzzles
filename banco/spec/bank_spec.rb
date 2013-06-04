@@ -4,6 +4,16 @@ describe Bank do
   subject(:bank) { Bank.new }
 
   let(:tellers) { 1 }
+  let(:clients) {
+    [
+     Bank::Client.new(arrival: 1,  service_duration: 5 ),
+     Bank::Client.new(arrival: 0,  service_duration: 10),
+     Bank::Client.new(arrival: 0,  service_duration: 10),
+     Bank::Client.new(arrival: 1,  service_duration: 10),
+     Bank::Client.new(arrival: 2,  service_duration: 10),
+     Bank::Client.new(arrival: 30, service_duration: 10),
+   ]
+  }
 
   describe '#initialize' do
     it 'sets the state of the Bank to closed' do
@@ -79,5 +89,9 @@ describe Bank do
         expect(subject.state).to eq(:closed)
       end
     end
+  end
+
+  describe '#add_clients_to_line' do
+    subject { bank.add_clients_to_line(clients) }
   end
 end

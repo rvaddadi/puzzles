@@ -28,7 +28,7 @@ class Bank
   class InvalidStateError < StandardError
   end
 
-  # Public: Represents a Client in the line of the Bank.
+  # Public: A Client in the line of the Bank.
   class Client
     include Virtus
 
@@ -63,7 +63,7 @@ class Bank
   # either :open or :closed
   attr_reader :state
 
-  # Public: Retuns the Array of Clients in the Bank.
+  # Public: Returns the Array of Clients in the Bank.
   attr_reader :clients
 
   # Public: Initialize a Bank.
@@ -73,7 +73,7 @@ class Bank
     @clients = Array.new
   end
 
-  # Public: Opens the Bank for the day.
+  # Public: Open the Bank for the day.
   #
   # tellers - The Integer representing the number of tellers in the
   #           Bank for the day.
@@ -91,14 +91,14 @@ class Bank
     self
   end
 
-  # Public: Tells if the Bank is open.
+  # Public: Tell if the Bank is open.
   #
   # Returns the Boolean indicating if the Bank is open.
   def open?
     state == :open
   end
 
-  # Public: Closes the bank.
+  # Public: Close the bank.
   #
   # Returns the Bank itself, useful for chaining.
   # Raises Bank::InvalidStateError if the Bank is already closed.
@@ -112,33 +112,29 @@ class Bank
     self
   end
 
-  # Public: Adds Clients to line in Bank.
+  # Public: Add Clients to line in Bank.
   #
-  # clients - The Array of Clients to be added to Bank.
-  #
-  # Returns the Bank itself, useful for chaining.
-  # Raises Bank::InvalidStateError if the Bank is already closed.
-  def add_clients_to_line clients
-    clients.each { |client| add_client_to_line client }
-    self
-  end
-
-  # Public: Add a Client to line in Bank.
-  #
-  # client - The Client to be added to Bank.
+  # clients - The Client or Array of Clients to be added.
   #
   # Returns the Bank itself, useful for chaining.
   # Raises Bank::InvalidStateError if the Bank is already closed.
-  def add_client_to_line client
+  def add_to_line clients
     unless open?
       raise InvalidStateError.new 'You tried to add clients to an closed Bank'
     end
 
-    clients << client
+    self.clients.push(*clients)
     self
   end
 
-  def clients_that_waited_more_than(time)
+  # Public: Count how many Clients waited more then a given time.
+  #
+  # time - The Integer threshold.
+  #
+  # Returns the Integer quantity of Clients that waited more then the given
+  #   time.
+  # Raises Bank::InvalidStateError if the Bank is open.
+  def clients_that_waited_more_than time
     if open?
       raise InvalidStateError.new 'You tried to count clients in an open Bank'
     end
@@ -147,49 +143,54 @@ class Bank
   end
 
   private
-    def calculate_wating_times
-      time              = 0
-      available_tellers = tellers
-      clients_serving   = Set.new
 
-      clients_in_line = -> {
-        clients.reject { |client|
-          client.served? ||
-            client.arrival > time ||
-            clients_serving.include?(client)
-        }
+  # Internal: Calculate how long Clients wait in line. The information is
+  # stored in Clients themselves.
+  #
+  # Returns nothing.
+  def calculate_wating_times
+    time              = 0
+    available_tellers = tellers
+    clients_serving   = Set.new
+
+    clients_in_line = -> {
+      clients.reject { |client|
+        client.served? ||
+          client.arrival > time ||
+          clients_serving.include?(client)
       }
+    }
 
-      next_client = -> { clients_in_line[].shift }
+    next_client = -> { clients_in_line[].shift }
 
-      takes_one_minute = -> {
-        clients_in_line[].each { |client| client.waiting_duration += 1 }
-        time += 1
-      }
+    takes_one_minute = -> {
+      clients_in_line[].each { |client| client.waiting_duration += 1 }
+      time += 1
+    }
 
-      serve_clients = -> {
-        takes_one_minute[]
-        clients_serving.each { |client| client.serving_duration += 1 }
-      }
+    serve_clients = -> {
+      takes_one_minute[]
+      clients_serving.each { |client| client.serving_duration += 1 }
+    }
 
-      say_goodbye_to_served_clients = -> {
-        clients_serving.select(&:served?).each do |client|
-          clients_serving.delete client
-          available_tellers += 1
-        end
-      }
-
-      call_clients_from_line = -> {
-        while available_tellers > 0 && ! (client = next_client[]).nil?
-          clients_serving << client
-          available_tellers -= 1
-        end
-      }
-
-      until clients.all?(&:served?)
-        call_clients_from_line []
-        serve_clients[]
-        say_goodbye_to_served_clients[]
+    say_goodbye_to_served_clients = -> {
+      clients_serving.select(&:served?).each do |client|
+        clients_serving.delete client
+        available_tellers += 1
       end
+    }
+
+    call_clients_from_line = -> {
+      while available_tellers > 0 && ! (client = next_client[]).nil?
+        clients_serving << client
+        available_tellers -= 1
+      end
+    }
+
+    until clients.all?(&:served?)
+      call_clients_from_line []
+      serve_clients[]
+      say_goodbye_to_served_clients[]
     end
+  end
 end

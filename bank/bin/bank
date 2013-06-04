@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/bank'
+
+bank = Bank.new
+
+def read_two_integers
+  gets.split(' ').map(&:to_i)
+end
+
+c, n = read_two_integers
+
+bank.open c
+
+n.times do
+  t, d = read_two_integers
+
+  client = Bank::Client.new arrival: t, serving_duration: d
+
+  bank.add_to_line client
+end
+
+bank.close
+
+puts bank.clients_that_waited_mode_than 20

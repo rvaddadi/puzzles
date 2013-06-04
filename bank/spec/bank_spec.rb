@@ -49,7 +49,7 @@ describe Bank do
       context 'has Clients' do
         before do
           bank.open(tellers)
-              .add_clients_to_line(clients)
+              .add_to_line(clients)
               .close
         end
 
@@ -107,7 +107,7 @@ describe Bank do
       end
 
       context 'there are clients in line' do
-        before { bank.add_clients_to_line(clients) }
+        before { bank.add_to_line(clients) }
 
         it 'calculates waited time for each Client' do
           expect(
@@ -118,8 +118,8 @@ describe Bank do
     end
   end
 
-  describe '#add_clients_to_line' do
-    subject { bank.add_clients_to_line(clients) }
+  describe '#add_to_line' do
+    subject { bank.add_to_line(clients) }
 
     context 'is closed' do
       it 'raises Bank::InvalidStateError' do
@@ -130,26 +130,19 @@ describe Bank do
     context 'is open' do
       before { bank.open(tellers) }
 
-      it 'adds clients to line' do
-        expect(subject.clients).to match_array(clients)
+      context 'multiple Clients' do
+        it 'adds all Clients to line' do
+          expect(subject.clients).to match_array(clients)
+        end
       end
-    end
-  end
 
-  describe '#add_client_to_line' do
-    subject { bank.add_client_to_line(clients.first) }
+      context 'single Client' do
+        subject { bank.add_to_line(client) }
+        let(:client) { clients.first }
 
-    context 'is closed' do
-      it 'raises Bank::InvalidStateError' do
-        expect(-> { subject }).to raise_error Bank::InvalidStateError
-      end
-    end
-
-    context 'is open' do
-      before { bank.open(tellers) }
-
-      it 'add client to line' do
-        expect(subject.clients).to match_array([clients.first])
+        it 'adds single Client to line' do
+          expect(subject.clients).to match_array([client])
+        end
       end
     end
   end
@@ -168,7 +161,7 @@ describe Bank do
     context 'is closed' do
       before do
         bank.open(tellers)
-            .add_clients_to_line(clients)
+            .add_to_line(clients)
             .close
       end
 

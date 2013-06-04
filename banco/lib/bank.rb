@@ -1,4 +1,5 @@
 require 'virtus'
+require 'set'
 
 # Public: Handle clients in a Bank.
 #
@@ -42,6 +43,17 @@ class Bank
     # Public: The Integer representing the amount of minutes the Client
     # had to wait in line.
     attribute :waiting_duration, Integer, default: 0
+
+    # Public: The Integer representing the amount of minutes a teller
+    # has been serving the Client.
+    attribute :serving_duration, Integer, default: 0
+
+    # Public: Tells if the Client is served.
+    #
+    # Returns the Boolean indicating if the Client is served.
+    def served?
+      serving_duration == service_duration
+    end
   end
 
   # Public: Returns the Integer number of tellers.
@@ -75,7 +87,7 @@ class Bank
 
     @state   = :open
     @tellers = tellers
-    @clients.clear
+    clients.clear
     self
   end
 
@@ -95,7 +107,8 @@ class Bank
       raise InvalidStateError.new 'You tried to close an already closed Bank'
     end
 
-    @state   = :closed
+    @state = :closed
+    calculate_wating_times unless clients.empty?
     self
   end
 
@@ -121,7 +134,54 @@ class Bank
       raise InvalidStateError.new 'You tried to add clients to an closed Bank'
     end
 
-    @clients << client
+    clients << client
     self
   end
+
+  private
+    def calculate_wating_times
+      time              = 0
+      available_tellers = tellers
+      clients_serving   = Set.new
+
+      clients_in_line = -> {
+        clients.reject { |client|
+          client.served? ||
+            client.arrival > time ||
+            clients_serving.include?(client)
+        }
+      }
+
+      next_client = -> { clients_in_line[].shift }
+
+      takes_one_minute = -> {
+        clients_in_line[].each { |client| client.waiting_duration += 1 }
+        time += 1
+      }
+
+      serve_clients = -> {
+        takes_one_minute[]
+        clients_serving.each { |client| client.serving_duration += 1 }
+      }
+
+      say_goodbye_to_served_clients = -> {
+        clients_serving.select(&:served?).each do |client|
+          clients_serving.delete client
+          available_tellers += 1
+        end
+      }
+
+      call_clients_from_line = -> {
+        while available_tellers > 0 && ! (client = next_client[]).nil?
+          clients_serving << client
+          available_tellers -= 1
+        end
+      }
+
+      until clients.all?(&:served?)
+        call_clients_from_line []
+        serve_clients[]
+        say_goodbye_to_served_clients[]
+      end
+    end
 end

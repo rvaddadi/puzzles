@@ -6,7 +6,6 @@ describe Bank do
   let(:tellers) { 1 }
   let(:clients) {
     [
-     Bank::Client.new(arrival: 1,  service_duration: 5 ),
      Bank::Client.new(arrival: 0,  service_duration: 10),
      Bank::Client.new(arrival: 0,  service_duration: 10),
      Bank::Client.new(arrival: 1,  service_duration: 10),
@@ -14,6 +13,7 @@ describe Bank do
      Bank::Client.new(arrival: 30, service_duration: 10),
    ]
   }
+  let(:waiting_durations) { [0, 10, 19, 28, 10] }
 
   describe '#initialize' do
     it 'sets the state to closed' do
@@ -103,6 +103,16 @@ describe Bank do
 
       it 'sets the state to closed' do
         expect(subject.state).to eq(:closed)
+      end
+
+      context 'there are clients in line' do
+        before { bank.add_clients_to_line(clients) }
+
+        it 'calculates waited time for each Client' do
+          expect(
+            subject.clients.map(&:waiting_duration)
+          ).to match_array(waiting_durations)
+        end
       end
     end
   end

@@ -1,7 +1,7 @@
 require 'virtus'
 require 'set'
 
-# Public: Handle clients in a Bank.
+# Public: Handle Clients in a Bank.
 #
 # Examples
 #
@@ -28,46 +28,60 @@ class Bank
   class InvalidStateError < StandardError
   end
 
-  # Public: A Client in the line of the Bank.
+  # Public: A Client of the Bank.
   class Client
     include Virtus
 
-    # Public: The Integer minute the Client arrived
-    # at the bank.
+    # Public: The Integer minute the Client arrived at the Bank.
     attribute :arrival, Integer
 
-    # Public: The Integer amount of minutes it takes
-    # to serve the Client.
+    # Public: The Integer amount of minutes it takes to serve the Client.
     attribute :service_duration, Integer
 
-    # Public: The Integer amount of minutes the Client
-    # had to wait in line.
+    # Public: The Integer amount of minutes the Client had to wait in line
+    # (default: 0).
     attribute :waiting_duration, Integer, default: 0
 
-    # Public: The Integer amount of minutes a teller
-    # has been serving the Client.
+    # Public: The Integer amount of minutes a teller has been serving the
+    # Client (default: 0).
     attribute :serving_duration, Integer, default: 0
 
-    # Public: The Symbol state in which the Client is. Allowed states are
-    # :before_line, :in_line, :being_served and :served.
+    # Public: The Symbol state in which the Client is.
+    # Allowed states are :before_line, :in_line, :being_served and :served
+    # (default: :before_line).
     attribute :state, Symbol, default: :before_line
 
+    # Public: Helper method to access state of Client.
+    #
+    # Returns the Boolean of whether the Client is before the line.
     def before_line?
       state == :before_line
     end
 
+    # Public: Helper method to access state of Client.
+    #
+    # Returns the Boolean of whether the Client is in line.
     def in_line?
       state == :in_line
     end
 
+    # Public: Helper method to access state of Client.
+    #
+    # Returns the Boolean of whether the Client is being served.
     def being_served?
       state == :being_served
     end
 
+    # Public: Helper method to access state of Client.
+    #
+    # Returns the Boolean of whether the Client is already served.
     def served?
       state == :served
     end
 
+    # Public: Helper method to access state of Client.
+    #
+    # Returns the Boolean of whether the Client just finished being served.
     def finished_serving?
       being_served? && service_duration == serving_duration
     end
@@ -80,7 +94,7 @@ class Bank
   # :open and :closed.
   attr_reader :state
 
-  # Public: Returns the Array of Clients in the Bank.
+  # Public: Returns the Array of Clients of the Bank.
   attr_reader :clients
 
   # Public: Initialize a Bank.
@@ -114,7 +128,7 @@ class Bank
     state == :open
   end
 
-  # Public: Close the bank.
+  # Public: Close the Bank.
   #
   # Returns the Bank itself, useful for chaining.
   # Raises Bank::InvalidStateError if the Bank is already closed.
@@ -136,7 +150,7 @@ class Bank
   # Raises Bank::InvalidStateError if the Bank is already closed.
   def add_to_line clients
     unless open?
-      raise InvalidStateError.new 'You tried to add clients to an closed Bank'
+      raise InvalidStateError.new 'You tried to add Clients to an closed Bank'
     end
 
     self.clients.push(*clients)
@@ -145,14 +159,14 @@ class Bank
 
   # Public: Count how many Clients waited more then a given time.
   #
-  # time - The Integer threshold.
+  # time - The Integer time threshold.
   #
   # Returns the Integer quantity of Clients that waited more then the given
   #   time.
   # Raises Bank::InvalidStateError if the Bank is open.
   def clients_that_waited_more_than time
     if open?
-      raise InvalidStateError.new 'You tried to count clients in an open Bank'
+      raise InvalidStateError.new 'You tried to count Clients in an open Bank'
     end
 
     clients.count { |client| client.waiting_duration > time }
@@ -178,6 +192,9 @@ class Bank
     serve_clients and wait_for_time_to_pass until clients.all?(&:served?)
   end
 
+  # Internal: Serve the Clients in the Bank.
+  #
+  # Returns nothing.
   def serve_clients
     clients_arrive
     say_hello_to_clients
@@ -186,12 +203,19 @@ class Bank
     say_goodbye_to_clients
   end
 
+  # Internal: Step of serving Clients when they arrive at the Bank.
+  #
+  # Returns nothing.
   def clients_arrive
     clients.select(&:before_line?).each do |client|
       client.state = :in_line if client.arrival == time
     end
   end
 
+  # Internal: Step of serving Clients when they end waiting in line and
+  # start getting served.
+  #
+  # Returns nothing.
   def say_hello_to_clients
     while available_tellers > 0 && (next_client = clients.find(&:in_line?))
       allocate_teller
@@ -199,18 +223,29 @@ class Bank
     end
   end
 
+  # Internal: Step of serving Clients when they are in line waiting for a
+  # teller to be available.
+  #
+  # Returns nothing.
   def while_other_clients_wait_in_line
     clients.select(&:in_line?).each do |client|
       client.waiting_duration += 1
     end
   end
 
+  # Internal: Step of serving Clients when they are being served by teller.
+  #
+  # Returns nothing.
   def perform_tasks_asked_by_clients
     clients.select(&:being_served?).each do |client|
       client.serving_duration += 1
     end
   end
 
+  # Internal: Step of serving Clients when they are done being served by
+  # teller.
+  #
+  # Returns nothing.
   def say_goodbye_to_clients
     clients.select(&:finished_serving?).each do |client|
       free_teller
@@ -218,14 +253,23 @@ class Bank
     end
   end
 
+  # Internal: Increase the time passing while serving Clients in Bank.
+  #
+  # Returns nothing.
   def wait_for_time_to_pass
     self.time += 1
   end
 
+  # Internal: Allocate a teller when it starts serving Client.
+  #
+  # Returns nothing.
   def allocate_teller
     self.available_tellers -= 1
   end
 
+  # Internal: Free a teller when it finishes serving Client.
+  #
+  # Returns nothing.
   def free_teller
     self.available_tellers += 1
   end

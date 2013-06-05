@@ -40,7 +40,6 @@ class Bank
       @service_duration     = service_duration
       self.waiting_duration = 0
       self.serving_duration = 0
-      self.state            = :before_line
     end
 
     # Public: Returns the Integer minute the Client arrived at the Bank.
@@ -58,44 +57,11 @@ class Bank
     # serving the Client (default: 0).
     attr_accessor :serving_duration
 
-    # Public: Gets/Sets the Symbol state in which the Client is.
-    # Allowed states are :before_line, :in_line, :being_served and :served
-    # (default: :before_line).
-    attr_accessor :state
-
-    # Public: Helper method to access state of Client.
-    #
-    # Returns the Boolean of whether the Client is before the line.
-    def before_line?
-      state == :before_line
-    end
-
-    # Public: Helper method to access state of Client.
-    #
-    # Returns the Boolean of whether the Client is in line.
-    def in_line?
-      state == :in_line
-    end
-
-    # Public: Helper method to access state of Client.
-    #
-    # Returns the Boolean of whether the Client is being served.
-    def being_served?
-      state == :being_served
-    end
-
-    # Public: Helper method to access state of Client.
-    #
-    # Returns the Boolean of whether the Client is already served.
-    def served?
-      state == :served
-    end
-
     # Public: Helper method to access state of Client.
     #
     # Returns the Boolean of whether the Client just finished being served.
     def finished_serving?
-      being_served? && service_duration == serving_duration
+      service_duration == serving_duration
     end
   end
 
@@ -186,22 +152,36 @@ class Bank
 
   protected
 
-  # Internal: Gets/Sets the Integer representing the clock on the wall.
+  # Internal: Gets/Sets the Integer the clock on the wall.
   attr_accessor :time
 
-  # Internal: Gets/Sets the Integer representing the quantity of available
+  # Internal: Gets/Sets the Integer the quantity of available
   # tellers.
   attr_accessor :available_tellers
+
+  # Internal: Gets/Sets the Set of Clients before the line.
+  attr_accessor :clients_before_line
+
+  # Internal: Gets/Sets the Array of Clients in the line.
+  attr_accessor :clients_in_line
+
+  # Internal: Gets/Sets the Set of Clients being served.
+  attr_accessor :clients_being_served
 
   # Internal: Calculate how long Clients wait in line. The information is
   # stored in Clients themselves.
   #
   # Returns nothing.
   def calculate_wating_times
-    self.time              = 0
-    self.available_tellers = tellers
+    self.time                  = 0
+    self.available_tellers     = tellers
+    self.clients_before_line   = Set.new clients
+    self.clients_in_line       = Array.new
+    self.clients_being_served  = Set.new
 
-    serve_clients and wait_for_time_to_pass until clients.all?(&:served?)
+    until clients.all?(&:finished_serving?)
+      serve_clients and wait_for_time_to_pass
+    end
   end
 
   # Internal: Serve the Clients in the Bank.
@@ -219,8 +199,11 @@ class Bank
   #
   # Returns nothing.
   def clients_arrive
-    clients.select(&:before_line?).each do |client|
-      client.state = :in_line if client.arrival == time
+    clients_before_line.each do |client|
+      if client.arrival == time
+        clients_before_line.delete client
+        clients_in_line.push client
+      end
     end
   end
 
@@ -229,9 +212,9 @@ class Bank
   #
   # Returns nothing.
   def say_hello_to_clients
-    while available_tellers > 0 && (next_client = clients.find(&:in_line?))
+    while available_tellers > 0 && (next_client = clients_in_line.shift)
       allocate_teller
-      next_client.state = :being_served
+      clients_being_served.add next_client
     end
   end
 
@@ -240,18 +223,14 @@ class Bank
   #
   # Returns nothing.
   def while_other_clients_wait_in_line
-    clients.select(&:in_line?).each do |client|
-      client.waiting_duration += 1
-    end
+    clients_in_line.each { |client| client.waiting_duration += 1 }
   end
 
   # Internal: Step of serving Clients when they are being served by teller.
   #
   # Returns nothing.
   def perform_tasks_asked_by_clients
-    clients.select(&:being_served?).each do |client|
-      client.serving_duration += 1
-    end
+    clients_being_served.each { |client| client.serving_duration += 1 }
   end
 
   # Internal: Step of serving Clients when they are done being served by
@@ -259,9 +238,9 @@ class Bank
   #
   # Returns nothing.
   def say_goodbye_to_clients
-    clients.select(&:finished_serving?).each do |client|
+    clients_being_served.select(&:finished_serving?).each do |client|
       free_teller
-      client.state = :served
+      clients_being_served.delete client
     end
   end
 

@@ -159,7 +159,7 @@ class Bank
   # tellers.
   attr_accessor :available_tellers
 
-  # Internal: Gets/Sets the Set of Clients before the line.
+  # Internal: Gets/Sets the Array of Clients before the line.
   attr_accessor :clients_before_line
 
   # Internal: Gets/Sets the Array of Clients in the line.
@@ -175,7 +175,7 @@ class Bank
   def calculate_wating_times
     self.time                  = 0
     self.available_tellers     = tellers
-    self.clients_before_line   = Set.new clients
+    self.clients_before_line   = clients.dup
     self.clients_in_line       = Array.new
     self.clients_being_served  = Set.new
 

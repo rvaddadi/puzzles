@@ -17,11 +17,11 @@ describe Bank do
   let(:tellers) { 1 }
   let(:clients) {
     [
-     Bank::Client.new(arrival: 0,  service_duration: 10),
-     Bank::Client.new(arrival: 0,  service_duration: 10),
-     Bank::Client.new(arrival: 1,  service_duration: 10),
-     Bank::Client.new(arrival: 2,  service_duration: 10),
-     Bank::Client.new(arrival: 30, service_duration: 10),
+     Bank::Client.new(0,  10),
+     Bank::Client.new(0,  10),
+     Bank::Client.new(1,  10),
+     Bank::Client.new(2,  10),
+     Bank::Client.new(30, 10),
    ]
   }
   let(:waiting_durations) { [0, 10, 19, 28, 10] }

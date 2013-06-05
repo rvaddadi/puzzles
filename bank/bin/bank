@@ -15,7 +15,7 @@ bank.open c
 n.times do
   t, d = read_two_integers
 
-  client = Bank::Client.new arrival: t, service_duration: d
+  client = Bank::Client.new t, d
 
   bank.add_to_line client
 end

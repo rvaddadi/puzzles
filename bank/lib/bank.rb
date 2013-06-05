@@ -1,4 +1,3 @@
-require 'virtus'
 require 'set'
 
 # Public: Handle Clients in a Bank.
@@ -30,26 +29,39 @@ class Bank
 
   # Public: A Client of the Bank.
   class Client
-    include Virtus
 
-    # Public: The Integer minute the Client arrived at the Bank.
-    attribute :arrival, Integer
+    # Public: Initialize a Client.
+    #
+    # arrival          - The Integer minute the Client arrived at the Bank.
+    # service_duration - The Integer amount of minutes it takes to serve the
+    #                    Client.
+    def initialize arrival, service_duration
+      @arrival              = arrival
+      @service_duration     = service_duration
+      self.waiting_duration = 0
+      self.serving_duration = 0
+      self.state            = :before_line
+    end
 
-    # Public: The Integer amount of minutes it takes to serve the Client.
-    attribute :service_duration, Integer
+    # Public: Returns the Integer minute the Client arrived at the Bank.
+    attr_reader :arrival
 
-    # Public: The Integer amount of minutes the Client had to wait in line
-    # (default: 0).
-    attribute :waiting_duration, Integer, default: 0
+    # Public: Returns the Integer amount of minutes it takes to serve the
+    # Client.
+    attr_reader :service_duration
 
-    # Public: The Integer amount of minutes a teller has been serving the
-    # Client (default: 0).
-    attribute :serving_duration, Integer, default: 0
+    # Public: Gets/Sets the Integer amount of minutes the Client had to wait
+    # in line (default: 0).
+    attr_accessor :waiting_duration
 
-    # Public: The Symbol state in which the Client is.
+    # Public: Gets/Sets the Integer amount of minutes a teller has been
+    # serving the Client (default: 0).
+    attr_accessor :serving_duration
+
+    # Public: Gets/Sets the Symbol state in which the Client is.
     # Allowed states are :before_line, :in_line, :being_served and :served
     # (default: :before_line).
-    attribute :state, Symbol, default: :before_line
+    attr_accessor :state
 
     # Public: Helper method to access state of Client.
     #

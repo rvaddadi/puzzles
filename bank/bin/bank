@@ -22,4 +22,4 @@ end
 
 bank.close
 
-puts bank.clients_that_waited_more_than  20
+puts bank.clients_that_waited_more_than 20

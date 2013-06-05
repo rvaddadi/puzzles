@@ -159,8 +159,8 @@ class Bank
   # tellers.
   attr_accessor :available_tellers
 
-  # Internal: Gets/Sets the Array of Clients before the line.
-  attr_accessor :clients_before_line
+  # Internal: Gets/Sets the Array of Clients outside the bank.
+  attr_accessor :clients_outside_bank
 
   # Internal: Gets/Sets the Array of Clients in the line.
   attr_accessor :clients_in_line
@@ -175,7 +175,7 @@ class Bank
   def calculate_wating_times
     self.time                 = 0
     self.available_tellers    = tellers
-    self.clients_before_line  = clients.dup
+    self.clients_outside_bank = clients.dup
     self.clients_in_line      = Array.new
     self.clients_being_served = Set.new
 
@@ -199,9 +199,9 @@ class Bank
   #
   # Returns nothing.
   def clients_arrive
-    clients_before_line.select { |client| client.arrival == time }
+    clients_outside_bank.select { |client| client.arrival == time }
       .each do |client|
-        clients_before_line.delete client
+        clients_outside_bank.delete client
         clients_in_line.push client
     end
   end

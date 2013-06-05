@@ -5,12 +5,12 @@ require 'set'
 # Examples
 #
 #   clients = [
-#     Bank::Client.new(arrival: 1,  service_duration: 5 ),
-#     Bank::Client.new(arrival: 0,  service_duration: 10),
-#     Bank::Client.new(arrival: 0,  service_duration: 10),
-#     Bank::Client.new(arrival: 1,  service_duration: 10),
-#     Bank::Client.new(arrival: 2,  service_duration: 10),
-#     Bank::Client.new(arrival: 30, service_duration: 10),
+#     Bank::Client.new(1,  5 ),
+#     Bank::Client.new(0,  10),
+#     Bank::Client.new(0,  10),
+#     Bank::Client.new(1,  10),
+#     Bank::Client.new(2,  10),
+#     Bank::Client.new(30, 10),
 #   ]
 #
 #   Bank.new

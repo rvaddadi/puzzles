@@ -173,11 +173,11 @@ class Bank
   #
   # Returns nothing.
   def calculate_wating_times
-    self.time                  = 0
-    self.available_tellers     = tellers
-    self.clients_before_line   = clients.dup
-    self.clients_in_line       = Array.new
-    self.clients_being_served  = Set.new
+    self.time                 = 0
+    self.available_tellers    = tellers
+    self.clients_before_line  = clients.dup
+    self.clients_in_line      = Array.new
+    self.clients_being_served = Set.new
 
     until clients.all?(&:finished_serving?)
       serve_clients and wait_for_time_to_pass
@@ -199,11 +199,10 @@ class Bank
   #
   # Returns nothing.
   def clients_arrive
-    clients_before_line.each do |client|
-      if client.arrival == time
+    clients_before_line.select { |client| client.arrival == time }
+      .each do |client|
         clients_before_line.delete client
         clients_in_line.push client
-      end
     end
   end
 

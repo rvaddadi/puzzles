@@ -32,35 +32,52 @@ class Bank
   class Client
     include Virtus
 
-    # Public: The Integer representing the minute the Client arrived
+    # Public: The Integer minute the Client arrived
     # at the bank.
     attribute :arrival, Integer
 
-    # Public: The Integer representing the amount of minutes it takes
+    # Public: The Integer amount of minutes it takes
     # to serve the Client.
     attribute :service_duration, Integer
 
-    # Public: The Integer representing the amount of minutes the Client
+    # Public: The Integer amount of minutes the Client
     # had to wait in line.
     attribute :waiting_duration, Integer, default: 0
 
-    # Public: The Integer representing the amount of minutes a teller
+    # Public: The Integer amount of minutes a teller
     # has been serving the Client.
     attribute :serving_duration, Integer, default: 0
 
-    # Public: Tells if the Client is served.
-    #
-    # Returns the Boolean indicating if the Client is served.
+    # Public: The Symbol state in which the Client is. Allowed states are
+    # :before_line, :in_line, :being_served and :served.
+    attribute :state, Symbol, default: :before_line
+
+    def before_line?
+      state == :before_line
+    end
+
+    def in_line?
+      state == :in_line
+    end
+
+    def being_served?
+      state == :being_served
+    end
+
     def served?
-      serving_duration == service_duration
+      state == :served
+    end
+
+    def finished_serving?
+      being_served? && service_duration == serving_duration
     end
   end
 
   # Public: Returns the Integer number of tellers.
   attr_reader :tellers
 
-  # Public: Returns the Symbol indicating the current state of the Bank,
-  # either :open or :closed
+  # Public: Returns the Symbol current state of the Bank. Allowed states are
+  # :open and :closed.
   attr_reader :state
 
   # Public: Returns the Array of Clients in the Bank.
@@ -75,8 +92,7 @@ class Bank
 
   # Public: Open the Bank for the day.
   #
-  # tellers - The Integer representing the number of tellers in the
-  #           Bank for the day.
+  # tellers - The Integer number of tellers in the Bank for the day.
   #
   # Returns the Bank itself, useful for chaining.
   # Raises Bank::InvalidStateError if the Bank is already open.
@@ -142,55 +158,75 @@ class Bank
     clients.count { |client| client.waiting_duration > time }
   end
 
-  private
+  protected
+
+  # Internal: Gets/Sets the Integer representing the clock on the wall.
+  attr_accessor :time
+
+  # Internal: Gets/Sets the Integer representing the quantity of available
+  # tellers.
+  attr_accessor :available_tellers
 
   # Internal: Calculate how long Clients wait in line. The information is
   # stored in Clients themselves.
   #
   # Returns nothing.
   def calculate_wating_times
-    time              = 0
-    available_tellers = tellers
-    clients_serving   = Set.new
+    self.time              = 0
+    self.available_tellers = tellers
 
-    clients_in_line = -> {
-      clients.reject { |client|
-        client.served? ||
-          client.arrival > time ||
-          clients_serving.include?(client)
-      }
-    }
+    serve_clients and wait_for_time_to_pass until clients.all?(&:served?)
+  end
 
-    next_client = -> { clients_in_line[].shift }
+  def serve_clients
+    clients_arrive
+    say_hello_to_clients
+    perform_tasks_asked_by_clients
+    while_other_clients_wait_in_line
+    say_goodbye_to_clients
+  end
 
-    takes_one_minute = -> {
-      clients_in_line[].each { |client| client.waiting_duration += 1 }
-      time += 1
-    }
-
-    serve_clients = -> {
-      takes_one_minute[]
-      clients_serving.each { |client| client.serving_duration += 1 }
-    }
-
-    say_goodbye_to_served_clients = -> {
-      clients_serving.select(&:served?).each do |client|
-        clients_serving.delete client
-        available_tellers += 1
-      end
-    }
-
-    call_clients_from_line = -> {
-      while available_tellers > 0 && ! (client = next_client[]).nil?
-        clients_serving << client
-        available_tellers -= 1
-      end
-    }
-
-    until clients.all?(&:served?)
-      call_clients_from_line []
-      serve_clients[]
-      say_goodbye_to_served_clients[]
+  def clients_arrive
+    clients.select(&:before_line?).each do |client|
+      client.state = :in_line if client.arrival == time
     end
+  end
+
+  def say_hello_to_clients
+    while available_tellers > 0 && (next_client = clients.find(&:in_line?))
+      allocate_teller
+      next_client.state = :being_served
+    end
+  end
+
+  def while_other_clients_wait_in_line
+    clients.select(&:in_line?).each do |client|
+      client.waiting_duration += 1
+    end
+  end
+
+  def perform_tasks_asked_by_clients
+    clients.select(&:being_served?).each do |client|
+      client.serving_duration += 1
+    end
+  end
+
+  def say_goodbye_to_clients
+    clients.select(&:finished_serving?).each do |client|
+      free_teller
+      client.state = :served
+    end
+  end
+
+  def wait_for_time_to_pass
+    self.time += 1
+  end
+
+  def allocate_teller
+    self.available_tellers -= 1
+  end
+
+  def free_teller
+    self.available_tellers += 1
   end
 end

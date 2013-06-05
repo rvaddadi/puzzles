@@ -1,5 +1,16 @@
 require 'spec_helper'
 
+# First test case in
+# http://olimpiada.ic.unicamp.br/pratique/programacao/nivel2/2012f2p2_banco:
+#
+# | Client | Arrival | Serving duration | Start | Finish | Waiting | Exceeded |
+# |--------|---------|------------------|-------|--------|---------|----------|
+# | 1      | 0       | 10               | 0     | 10     | 0       | No       |
+# | 2      | 0       | 10               | 10    | 20     | 10      | No       |
+# | 3      | 1       | 10               | 20    | 30     | 19      | No       |
+# | 4      | 2       | 10               | 30    | 40     | 28      | Yes      |
+# | 5      | 30      | 10               | 40    | 50     | 10      | No       |
+
 describe Bank do
   subject(:bank) { Bank.new }
 

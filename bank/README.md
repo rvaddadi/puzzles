@@ -10,17 +10,11 @@ Install
 This solution is written in [Ruby][3]. It's tested in 2.0, but should work in
 1.9 as well.
 
-Install dependencies with:
-
-```bash
-$ bundle install
-```
-
 Usage
 -----
 
 ```bash
-$ bundle exec ruby bin/bank [input-file]
+$ ruby bin/bank [input-file]
 ````
 
 `[input-file]` is a optional parameter, if none is passed, read from `stdin`.
@@ -30,6 +24,14 @@ magic of `ARGF` so I thought I would put it anyways.
 
 Run tests
 ---------
+
+Install dependencies with:
+
+```bash
+$ bundle install
+```
+
+Run suite with:
 
 ```bash
 $ bundle exec rspec

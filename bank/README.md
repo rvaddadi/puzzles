@@ -15,7 +15,7 @@ Usage
 
 ```bash
 $ ruby bin/bank [input-file]
-````
+```
 
 `[input-file]` is a optional parameter, if none is passed, read from `stdin`.
 

@@ -1,13 +1,10 @@
-Bank
-====
-
-Solution for the coding challenge [Banco][1], from
-[Olimpíada Brasileira de Informática][2].
+Bank - Ruby
+===========
 
 Install
 -------
 
-This solution is written in [Ruby][3]. It's tested in 2.0, but should work in
+This solution is written in [Ruby][1]. It's tested in 2.0, but should work in
 1.9 as well.
 
 Usage
@@ -38,6 +35,4 @@ $ bundle exec rspec
 ```
 
 
-[1]: http://olimpiada.ic.unicamp.br/pratique/programacao/nivel2/2012f2p2_banco
-[2]: http://olimpiada.ic.unicamp.br/
-[3]: http://www.ruby-lang.org/
+[1]: http://www.ruby-lang.org/

@@ -1,51 +1,207 @@
+/*
+ * bank.c
+ *
+ * Solution to the Bank problem.
+ *
+ * Refer to `README.md` for description of problem.
+ *
+ * The solution is all in a single file to work in OBI's auto corrector.
+ *
+ * The logic for the solution is naively simulating the Bank with the passing
+ * of time. Clients are tracked while moved to line and served. Afterwords,
+ * the amount of unsatisfied Clients is measured.
+ *
+ * This approach is simple to write and read, also it's not expensive
+ * computation with the limits given in the problem.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
+
+/*
+ * The maximum time a client should wait in line.
+ */
 #define MAXIMUM_WAITING_TIME 20
 
+/*
+ * Client being served by bank.
+ */
 typedef struct {
+  /*
+   * Time when the Client arrives at the bank.
+   */
   int arrival;
+
+  /*
+   * How long it takes to serve a Client.
+   */
   int total_serving_duration;
+
+  /*
+   * How long the Client has waited in line.
+   */
   int waiting_duration;
+
+  /*
+   * How long the teller has been serving the Client.
+   */
   int serving_duration;
 } client_t;
 
+/*
+ * An array of Clients.
+ */
 typedef struct {
+  /*
+   * The Clients in the array.
+   */
   client_t** clients;
+
+  /*
+   * The size of the array of Clients.
+   */
   int size;
 } clients_t;
 
+/*
+ * The Bank that serves the clients.
+ */
 typedef struct {
+  /*
+   * Quantity of tellers working in the Bank.
+   */
   int tellers;
+
+  /*
+   * The amount of tellers busy serving clients.
+   *
+   * This number should never be greater than `tellers`.
+   */
   int occupied_tellers;
+
+  /*
+   * Clients outside the Bank, before getting in line.
+   */
   clients_t* outside;
+
+  /*
+   * Clients in line waiting to be served.
+   */
   clients_t* line;
+
+  /*
+   * Clients being served.
+   */
   clients_t* serving;
+
+  /*
+   * Clients that have finished being served.
+   */
   clients_t* served;
 } bank_t;
 
+/*
+ * Read Bank information from `stdin`.
+ *
+ * Returns the Bank with proper information.
+ */
 bank_t* read_bank_information();
 
+/*
+ * Serve Clients in Bank.
+ *
+ * bank - The Bank with clients to serve.
+ */
 void serve_clients(bank_t* bank);
 
+/*
+ * Count clients that waited in line more than a threshold.
+ *
+ * clients   - The line of Clients.
+ * threshold - The maximum amount of time a Client should wait in line.
+ *
+ * Returns the amount of Clients that waited more than the `threshold`.
+ */
 int clients_exceeded_waiting(clients_t* clients, int threshold);
 
+/*
+ * Add Client to array.
+ *
+ * Addition is performed in the end. This way, if the array is traversed
+ * is ascending order, it behaves as a queue.
+ *
+ * clients - The Clients array in which the Client is added.
+ * client  - The Client to be added.
+ */
 void add_client(clients_t* clients, client_t* client);
 
+/*
+ * Remove Client from array.
+ *
+ * clients  - The Clients array from which the Client is removed.
+ * position - The position of the Client being removed. The position is
+ *            zero-indexed.
+ */
 void remove_client(clients_t* clients, int position);
 
+/*
+ * Check if all Clients were served.
+ *
+ * This means the Bank can close.
+ *
+ * bank - The bank in which the test should be performed.
+ */
 int all_clients_served(bank_t* bank);
 
+/*
+ * Initialize the Client struct.
+ *
+ * arrival                - The time when the Client arrives at the bank.
+ * total_serving_duration - The time it takes to serve a Client.
+ *
+ * Retuns the initialized Client.
+ */
 client_t* init_client(int arrival, int total_serving_duration);
 
+/*
+ * Free the Client struct.
+ *
+ * client - The Client to be freed.
+ */
 void free_client(client_t* client);
 
+/*
+ * Initialize Clients array.
+ *
+ * maximum_size - The maximum amount of Clients in array.
+ *
+ * Retuns the initialized Clients array.
+ */
 clients_t* init_clients(int maximum_size);
 
+/*
+ * Free Clients array.
+ *
+ * clients - The Clients array to be freed.
+ */
 void free_clients(clients_t* clients);
 
+/*
+ * Initialize the Bank struct.
+ *
+ * tellers - The amount of tellers working in the Bank.
+ * clients - The amount of Clients the Bank is going to serve.
+ *
+ * Returns the initialized Bank.
+ */
 bank_t* init_bank(int tellers, int clients);
 
+/*
+ * Free Bank.
+ *
+ * bank - The Bank to be freed.
+ */
 void free_bank(bank_t* bank);
 
 int main(int argc, char const *argv[]) {

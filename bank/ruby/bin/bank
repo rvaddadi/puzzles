@@ -5,7 +5,7 @@ require_relative '../lib/bank'
 bank = Bank.new
 
 def read_two_integers
-  ARGF.gets.split(' ').map(&:to_i)
+  ARGF.gets.split.map(&:to_i)
 end
 
 c, n = read_two_integers
